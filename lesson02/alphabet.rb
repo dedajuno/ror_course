@@ -1,10 +1,10 @@
 alphabet = ("a".."z").to_a
 vowels = ["a","e","i","o","u"]
-index = Hash.new(0) 
+vow_hash = {} 
 
 alphabet.each_with_index do |letter, num|
   if vowels.include?(letter)
-    index[letter] = num + 1
+    vow_hash[letter] = num + 1
   end
 end
-print index
+print vow_hash

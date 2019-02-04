@@ -38,9 +38,11 @@ loop do
     puts ""
     total_sum[goods.to_sym] = subtotal.to_f 
 end
-puts cart
+puts ""
+cart.each do |item, value|
+  puts "#{item}: #{value[:price]} x #{value[:quantity]}"
+end
     puts ""
-puts total_sum
     puts ""
 total = 0
 total_sum.each_value { |x| total += x }
