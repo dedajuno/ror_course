@@ -1,112 +1,133 @@
 class Station
   attr_reader :name,
-              :list_of_trains
+              :trains
 
   def initialize(name)
     @name = name
-    @list_of_trains = []
-  end
-  
-  def Station.receive(train)
-#    @train = train
-    @list_of_trains << train
-  end
-  
-  def Station.list
-    #@list_of_trains
-    #puts @list_of_trains
-    @list_of_trains.each {|station| puts station}
+    @trains = []
   end
 
-#  def Station.list_by_type(type)
-#    @type = Train.type
-#    if type = freight
-      
+  def list
+    @trains.each {|train| puts "#{train.number}: #{train.type}"}
+  end
 
+  def receive(train)
+    @trains << train
+  end
 
-  def Station.send(train)
-   if @list_of_trains.include?(train)
-     @list_of_trains.delete(train)
-     puts @list_of_trains
-   else
-     puts "#{train} not found"
-   end
+  def send(train)
+    if @trains.include?(train)
+       @trains.delete(train)
+    else
+      puts "#{train} not found"
+    end
   end
 end
 
 class Route
-  attr_reader :station
+  attr_reader :stations
 
   def initialize(first_station, last_station)
     @first_station = first_station
     @last_station = last_station
-    @list_of_stations = [first_station, last_station]
+    @stations = [first_station, last_station]
   end
 
-  def Route.add_station(station)
-    @list_of_stations.insert(1,station)
+  def add(station)
+    @stations.insert(-2,station)
   end
-  
-  def Route.del_station(station)
+
+  def del(station)
     if station != @first_station && station != @last_station
-      @list_of_stations.delete(station)
+      @stations.delete(station)
     else
       puts "Not allowed"
     end
   end
 
-  def Route.list
-    puts @list_of_stations
+  def list
+    puts @stations
   end
 end
 
 class Train
+  attr_reader :number, :type
+  attr_accessor :vagon_count, :current_station
+
   def initialize(number, type, vagon_count)
+    @speed = 0
     @number = number
-    @type = [passenger, freight]
+    @type = type
     @vagon_count = vagon_count
+    @index_station = 0
   end
 
-  def Train.accellerate(speed)
-    @speed = speed
+  def accellerate(speed)
+    @speed += speed
   end
 
-  def Train.current_speed
+  def current_speed
     @speed
-    puts @speed
   end
-  
-  def Train.stop
+
+  def stop
     speed = 0
     @speed = speed
   end
 
-  def Train.vagons
-    @vagon_count
-    puts @vagon_count
-  end
-
-  def Train.add_del_vagons(value)
-    if Train.current_speed = 0
+  def change_count(value)
+    if current_speed == 0
       if value > 0
         @vagon_count += 1
       else
         @vagon_count -= 1
       end
+    else
+      puts "Train is moving. First stop the train"
     end
   end
-  
-  def Train.route(route)
-    @route = Route.list
-    puts @route
-    @first_station = Route.first_station
 
+  def route(route)
+    @route = route
+    @current_station = @route.stations.first
+    @current_station.receive(self)
   end
 
-  def Train.move_forward(station)
-    @station = Route.list
+  def next_station
+    station_index = @route.stations.index(@current_station)
+    if station_index >= @route.stations.size - 1
+      puts "end of route"
+    else
+      puts "next station is - #{@route.stations[station_index + 1].name}"
+    end
+  end
+
+  def previous_station
+    station_index = @route.stations.index(@current_station)
+    if station_index <= 0
+      puts "begin of route - #{@current_station.name}"
+    else
+      puts "previous station is - #{@route.stations[station_index - 1].name}"
+    end
+  end
+
+  def move_forward
+    station_index = @route.stations.index(@current_station)
+    if station_index >= @route.stations.size - 1
+      puts "end of route"
+    else
+      @current_station = @route.stations[station_index + 1]
+      @current_station.receive(self)
+    end
+  end
+
+  def move_back
+    station_index = @route.stations.index(@current_station)
+    if station_index <= 0
+      puts "begin of route"
+    else
+      @current_station = @route.stations[station_index - 1]
+      @current_station.receive(self)
+    end
   end
 end
-    
-
-
