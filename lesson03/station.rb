@@ -105,29 +105,31 @@ class Train
   def previous_station
     station_index = @route.stations.index(@current_station)
     if station_index <= 0
-      puts "begin of route - #{@current_station.name}"
+      puts "#{@current_station.name}"
     else
-      puts "previous station is - #{@route.stations[station_index - 1].name}"
+      puts "#{@route.stations[station_index - 1].name}"
     end
   end
 
   def move_forward
     station_index = @route.stations.index(@current_station)
     if station_index >= @route.stations.size - 1
-      puts "end of route"
+      puts "Dead End"
     else
       @current_station = @route.stations[station_index + 1]
       @current_station.receive(self)
+      puts "#{@current_station.name}"
     end
   end
 
   def move_back
     station_index = @route.stations.index(@current_station)
     if station_index <= 0
-      puts "begin of route"
+      puts "Start"
     else
       @current_station = @route.stations[station_index - 1]
       @current_station.receive(self)
+      puts "#{@current_station.name}"
     end
   end
 end
