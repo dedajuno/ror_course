@@ -17,7 +17,7 @@ class Station
 
   def send(train)
     if @trains.include?(train)
-       @trains.delete(train)
+      @trains.delete(train)
     else
       puts "#{train} not found"
     end
@@ -90,46 +90,62 @@ class Train
   def route(route)
     @route = route
     @current_station = @route.stations.first
+    @index_station = 0
     @current_station.receive(self)
   end
 
   def next_station
-    station_index = @route.stations.index(@current_station)
-    if station_index >= @route.stations.size - 1
-      puts "end of route"
-    else
-      puts "next station is - #{@route.stations[station_index + 1].name}"
-    end
+    @route.stations[@index_station + 1]
+  end
+
+  def current_station
+    @route.stations[@index_station]
   end
 
   def previous_station
-    station_index = @route.stations.index(@current_station)
-    if station_index <= 0
-      puts "#{@current_station.name}"
-    else
-      puts "#{@route.stations[station_index - 1].name}"
-    end
+    @route.stations[@index_station - 1]
   end
 
   def move_forward
-    station_index = @route.stations.index(@current_station)
-    if station_index >= @route.stations.size - 1
-      puts "Dead End"
+    if @index_station >= @route.stations.size - 1
+      puts "Dead End!"
     else
-      @current_station = @route.stations[station_index + 1]
-      @current_station.receive(self)
-      puts "#{@current_station.name}"
+      @index_station += 1
     end
   end
 
   def move_back
-    station_index = @route.stations.index(@current_station)
-    if station_index <= 0
-      puts "Start"
+    if @index_station == 0
+      puts "We are already on the first station"
     else
-      @current_station = @route.stations[station_index - 1]
-      @current_station.receive(self)
-      puts "#{@current_station.name}"
+      @index_station -= 1
     end
   end
 end
+
+
+
+station1 = Station.new('MSK')
+station2 = Station.new('SPB')
+station3 = Station.new('FRU')
+station4 = Station.new('ALA')
+station5 = Station.new('BRL')
+
+route = Route.new(station1, station5)
+
+route.add(station2)
+route.add(station3)
+route.add(station4)
+
+route.stations.each {|station| puts "Station:  #{station.name}"}
+
+train1 = Train.new(1, 'Cargo', 2)
+
+train1.route(route)
+
+train1.move_forward
+train1.move_forward
+
+puts "#{train1.previous_station.name}"
+puts "#{train1.current_station.name}"
+puts "#{train1.next_station.name}"
