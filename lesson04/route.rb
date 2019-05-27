@@ -24,5 +24,5 @@ class Route
   end
 end
 
-route1 = Route.new("MSK", "SPB")
-puts route1
+#route1 = Route.new("MSK", "SPB")
+#puts "#{route1.list}"

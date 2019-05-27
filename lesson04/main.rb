@@ -58,17 +58,6 @@ def create_route
   print "Enter the next station of route: "
   last_station = gets.chomp
   route = Route.new(first_station, last_station)
-#  puts "Do you want to add more? y/n "
-# add_more = gets.chomp
-#  while add_more = gets.chomp do
-#    if add_more == "Y" || "y"
-#      print "Enter the next station of route: "
-#      next_station = gets.chomp
-###      route.add(next_station)
-#    else add_more == "N" || "n"
-#      break
-#    end
-#  end
   @routes << route
   puts "Done"
 end
@@ -110,11 +99,10 @@ end
 
 def change_carriages_count
   puts "Choose train: "
-  train = gets.chomp
-  until @trains.include? train do
-    train = gets.chomp
-  end
-  puts "Specify count of carriages to add or delete: "
+  @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
+  train = gets.to_i
+  return change_carriages_count until @trains.include?(train)
+  puts "Specify count of carriages to add(+1) or delete(-1): "
   car_value = gets.to_i
   if car_value > 0
     Train.carriage_count += car_value
@@ -125,19 +113,23 @@ def change_carriages_count
 end
 
 def move_train
+  print "Please choose train number: "
+  @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
+  train_number = gets.to_i
+  train_index = train_number - 1
   print "Specify which direction should train move (e.g. 'back' or 'fwd': "
   direction = gets.chomp
   if direction == "back"
-    Train.move_back
+    @trains[train_index].move_back
     puts "#{Train.current_station}"
   elsif direction == "fwd"
-    Train.move_forward
+    @trains[train_index].move_forward
     puts "#{Train.current_station}"
   end
 end
 
 def list_stations
-  @route.list
+  @stations.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
 end
 
 prompt = "Please choose number of option below:
@@ -148,7 +140,7 @@ Add station from route          4
 Delete station from route       5
 Assign route to train           6
 Change count of carriages       7
-Move train bank or fwd          8
+Move train backward or forward  8
 List stations                   9
 Press Enter to quit.
 > "
