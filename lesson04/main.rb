@@ -31,24 +31,43 @@ require_relative 'cargo'
 @stations = []
 
 def create_station
-  print "Enter station name: "
-  station_name = gets.chomp
-  station = Station.new(station_name)
-  @stations << station
+  loop do
+    print "Enter station name: "
+    station_name = gets.chomp
+    station = Station.new(station_name)
+    @stations << station
+    print "Add new station? (y/n): "
+    add_more = gets.chomp
+    if add_more == "n"
+      break
+    end
+  end
+  @stations.each {|station| puts "Station: #{station.name}"}
   puts "Done"
 end
 
+
 def create_train
-  print "Choose train type (Passenger or Cargo): "
-  type = gets.chomp
-  print "Enter train number: "
-  number = gets.to_i
-  print "Enter initial carriage count: "
-  carriage_count = gets.to_i
-  (type == "Cargo") ?
-      train = CargoTrain.new(number, type, carriage_count) :
-      train = PassengerTrain.new(number, type, carriage_count)
-  @trains << train
+  number = 0
+  loop do
+    print "Choose train type (Passenger(P) or Cargo(C): "
+    type = gets.chomp
+    #print "Enter train number: "
+    number += 1
+    print "Enter initial carriage count: "
+    carriage_count = gets.to_i
+    (type == "C") ?
+      train = CargoTrain.new(number, "Cargo", carriage_count) :
+      train = PassengerTrain.new(number, "Passenger", carriage_count)
+    @trains << train
+    print "Add new train? (y/n): "
+    add_more = gets.chomp
+    if add_more == "n"
+      break
+    end
+  end
+  @trains.each {|train| puts "Train ##{train.number} | Type: #{train.type} | Carriage count: #{train.carriage_count}" }
+  #@trains.each_with_index {|train| puts "#{train}"}
   puts "Done"
 end
 
@@ -59,41 +78,59 @@ def create_route
   last_station = gets.chomp
   route = Route.new(first_station, last_station)
   @routes << route
-  puts "Done"
-end
-
-def delete_station_from_route
-  puts "Enter station, which should be deleted: "
-  deleted_station = gets.chomp
-  @routes[route].del(deleted_station)
-  puts "Done"
+  loop do
+    print "Add another station? (y/n): "
+    add_more = gets.chomp
+    if add_more == "y"
+      add_station_to_route
+    else
+      break
+    end
+  end
+  puts "Done for create_route"
 end
 
 def add_station_to_route
+  @routes.each_with_index { |name, number | puts "#{number + 1} --- #{name}"}
+  print "Choose the route number: "
+  route = gets.to_i
   puts "Enter station, which should be added: "
   added_station = gets.chomp
-  @routes[route].add(added_station)
-  puts "Done"
+  @routes[route - 1].add(added_station)
+  puts "#{@routes[route - 1].list}"
 end
+
+def delete_station_from_route
+  @routes.each_with_index { |name, number | puts "#{number + 1} --- #{name}"}
+  print "Choose the route number: "
+  route = gets.to_i
+  puts "Enter station, which should be deleted: "
+  deleted_station = gets.chomp
+  @routes[route - 1].del(deleted_station)
+  puts "#{@routes[route - 1].list}"
+end
+
 
 def assign_route_to_train
   puts "Assign route to train."
   puts "Choose train number: "
-  #train = @trains
   @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
   train_number = gets.to_i
-  until @trains.include?(train_number - 1) do
-    #train_name = gets.chomp
+  until @trains.include?(train_number - 1)
+    puts "There is no any train with this number."
+    create_train
     break
   end
   puts "Choose route: "
   @routes.each_with_index {|name, number| puts "#{number + 1} - #{name}"}
   route_number = gets.to_i
   until @routes.include?(route_number - 1)
-    #route_name = gets.chomp
+    puts "There is no any route with this number"
+    create_route
     break
   end
   @trains[train_number - 1].route(@routes[route_number - 1])
+  puts "Current station for train #{@trains[train_number - 1]} is #{@trains[train_number - 1].current_station}"
   puts "Done"
 end
 
@@ -101,47 +138,60 @@ def change_carriages_count
   puts "Choose train: "
   @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
   train = gets.to_i
-  return change_carriages_count until @trains.include?(train)
+  until @trains.include?(train - 1)
+    puts "There is no such number of train."
+    create_train
+    break
+  end
   puts "Specify count of carriages to add(+1) or delete(-1): "
   car_value = gets.to_i
-  if car_value > 0
-    Train.carriage_count += car_value
-  else
-    @carriage_count -= car_value
-  end
-  puts "Done"
+  @trains[train - 1].change_count(car_value)
+    puts "#{@trains[train - 1]}"
 end
 
 def move_train
   print "Please choose train number: "
   @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
   train_number = gets.to_i
-  train_index = train_number - 1
+  #train_index = train_number - 1
   print "Specify which direction should train move (e.g. 'back' or 'fwd': "
   direction = gets.chomp
   if direction == "back"
-    @trains[train_index].move_back
-    puts "#{Train.current_station}"
+    @trains[train_number - 1].move_back
+    puts "#{@trains[train_number - 1].current_station}"
   elsif direction == "fwd"
-    @trains[train_index].move_forward
-    puts "#{Train.current_station}"
+    @trains[train_number - 1].move_forward
+    puts "#{@trains[train_number - 1].current_station}"
   end
 end
 
 def list_stations
-  @stations.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
+  @stations.each {|station| puts "#{station.name} #{station.trains}"}
+  puts @stations
+end
+
+def list_routes
+  @routes.each {|route| puts "#{route.first_station} #{route.last_station}"}
+  puts @routes
+end
+
+def list_trains
+  @trains.each {|train| puts "##{train.number} - #{train.type} #{train.carriage_count}"}
+  puts @trains
 end
 
 prompt = "Please choose number of option below:
 Create new station              1
 Create new train                2
 Create new route                3
-Add station from route          4
+Add station to route            4
 Delete station from route       5
 Assign route to train           6
 Change count of carriages       7
 Move train backward or forward  8
 List stations                   9
+List routes                     10
+List trains                     11
 Press Enter to quit.
 > "
 print prompt
@@ -159,7 +209,12 @@ while option = gets.to_i do
     puts "__________________"
     print prompt
   elsif option == 4
-    add_station_to_route
+    if @routes.empty?
+      puts "No routes were created."
+      create_route
+    else
+      add_station_to_route
+    end
     puts "__________________"
     print prompt
   elsif option == 5
@@ -180,6 +235,14 @@ while option = gets.to_i do
     print prompt
   elsif option == 9
     list_stations
+    puts "__________________"
+    print prompt
+  elsif option == 10
+    list_routes
+    puts "__________________"
+    print prompt
+  elsif option == 11
+    list_trains
     puts "__________________"
     print prompt
   else
