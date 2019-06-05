@@ -1,7 +1,6 @@
-require_relative 'train'
 class PassengerTrain < Train
-  def change_count(type, value)
-    if type == 'Passenger'
+  def change_count(value)
+    if value.class == PassengerWagon
       super
     else
       puts "Wrong carriage type"

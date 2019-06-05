@@ -25,6 +25,9 @@ require_relative 'train'
 require_relative 'station'
 require_relative 'passenger'
 require_relative 'cargo'
+require_relative 'passengerwagon'
+require_relative 'cargowagon'
+require_relative 'wagon'
 
 @trains = []
 @routes = []

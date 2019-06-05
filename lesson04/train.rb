@@ -58,7 +58,7 @@ class Train
     end
   end
 
-  def change_count(type, value)
+  def change_count(value)
     if current_speed == 0
       if value > 0
         @carriage_count += value
