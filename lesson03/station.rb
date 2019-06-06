@@ -149,3 +149,6 @@ train1.move_forward
 puts "#{train1.previous_station.name}"
 puts "#{train1.current_station.name}"
 puts "#{train1.next_station.name}"
+puts
+#route.list
+puts train1
