@@ -1,12 +1,12 @@
 class Train
   attr_reader :number, :type
-  attr_accessor :carriage_count, :current_station
+  attr_accessor :carriages, :current_station
 
-  def initialize(number, type, carriage_count)
+  def initialize(number, type)
     @speed = 0
     @number = number
     @type = type
-    @carriage_count = carriage_count
+    @carriages = []
     @index_station = 0
   end
 
@@ -58,15 +58,23 @@ class Train
     end
   end
 
-  def change_count(value)
+  def add_carriage(carriage)
     if current_speed == 0
-      if value > 0
-        @carriage_count += value
+      @carriages << carriage
+    else
+      puts "Train is moving. First stop the train"
+    end
+  end
+  def remove_carriage(carriage)
+    if current_speed == 0
+      if @carriages.empty? || @carriages.include?(carriage) != true
+        puts "There is no any or given carriages added to train."
       else
-        @carriage_count -= value
+        @carriages.delete(carriage)
       end
     else
       puts "Train is moving. First stop the train"
     end
   end
 end
+

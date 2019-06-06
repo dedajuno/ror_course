@@ -29,9 +29,12 @@ require_relative 'passengerwagon'
 require_relative 'cargowagon'
 require_relative 'wagon'
 
+private #так как кроме этого класса методы больше нигде не будут использованы.
+
 @trains = []
 @routes = []
 @stations = []
+@carriages = []
 
 def create_station
   loop do
@@ -55,13 +58,12 @@ def create_train
   loop do
     print "Choose train type (Passenger(P) or Cargo(C): "
     type = gets.chomp
-    #print "Enter train number: "
     number += 1
-    print "Enter initial carriage count: "
-    carriage_count = gets.to_i
+    #print "Enter initial carriage count: "
+    #carriage_count = gets.to_i
     (type == "C") ?
-      train = CargoTrain.new(number, "Cargo", carriage_count) :
-      train = PassengerTrain.new(number, "Passenger", carriage_count)
+      train = CargoTrain.new(number, "Cargo") :
+      train = PassengerTrain.new(number, "Passenger")
     @trains << train
     print "Add new train? (y/n): "
     add_more = gets.chomp
@@ -69,7 +71,7 @@ def create_train
       break
     end
   end
-  @trains.each {|train| puts "Train ##{train.number} | Type: #{train.type} | Carriage count: #{train.carriage_count}" }
+  @trains.each {|train| puts "Train ##{train.number} | Type: #{train.type} | Carriages: #{train.carriages}" }
   #@trains.each_with_index {|train| puts "#{train}"}
   puts "Done"
 end
@@ -113,13 +115,12 @@ def delete_station_from_route
   puts "#{@routes[route - 1].list}"
 end
 
-
 def assign_route_to_train
   puts "Assign route to train."
   puts "Choose train number: "
   @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
   train_number = gets.to_i
-  until @trains.include?(train_number - 1)
+  until @trains.include?(@trains[train_number - 1])
     puts "There is no any train with this number."
     create_train
     break
@@ -127,7 +128,7 @@ def assign_route_to_train
   puts "Choose route: "
   @routes.each_with_index {|name, number| puts "#{number + 1} - #{name}"}
   route_number = gets.to_i
-  until @routes.include?(route_number - 1)
+  until @routes.include?(@routes[route_number - 1])
     puts "There is no any route with this number"
     create_route
     break
@@ -138,18 +139,30 @@ def assign_route_to_train
 end
 
 def change_carriages_count
-  puts "Choose train: "
+  puts "Choose train number: "
   @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
   train = gets.to_i
-  until @trains.include?(train - 1)
+  until @trains.include?(@trains[train - 1])
     puts "There is no such number of train."
     create_train
     break
   end
-  puts "Specify count of carriages to add(+1) or delete(-1): "
-  car_value = gets.to_i
-  @trains[train - 1].change_count(car_value)
-    puts "#{@trains[train - 1]}"
+  puts "Please choose action."
+  puts "Delete(d) or add(a): "
+  option = gets.chomp
+  puts "Specify carriage name: "
+  car_value = gets.chomp
+  if @trains[train - 1].class == CargoTrain
+    CargoWagon.new(car_value)
+  else
+    PassengerWagon.new(car_value)
+  end
+  if option == "a"
+    @trains[train - 1].add_carriage(car_value)
+  else option == "d"
+    @trains[train - 1].remove_carriage(car_value)
+  end
+  @trains.each {|train| puts "Train ##{train.number} | Type: #{train.type} | Carriages: #{train.carriages}"}
 end
 
 def move_train

@@ -1,9 +1,6 @@
 class CargoTrain < Train
-  def change_count(value)
-    if value.class == CargoWagon
-      super
-    else
-      puts "Wrong carriage type"
-    end
+  def add_carriage(carriage)
+    return puts "Wrong carriage type" if type != "Cargo"
+    super
   end
 end

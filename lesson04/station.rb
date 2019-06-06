@@ -10,7 +10,7 @@ class Station
   def list
     @trains.each {|train| puts "#{train.number}: #{train.type}"}
   end
-
+private
   def receive(train)
     @trains << train
   end
