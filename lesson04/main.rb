@@ -59,8 +59,6 @@ def create_train
     print "Choose train type (Passenger(P) or Cargo(C): "
     type = gets.chomp
     number += 1
-    #print "Enter initial carriage count: "
-    #carriage_count = gets.to_i
     (type == "C") ?
       train = CargoTrain.new(number, "Cargo") :
       train = PassengerTrain.new(number, "Passenger")
@@ -72,7 +70,6 @@ def create_train
     end
   end
   @trains.each {|train| puts "Train ##{train.number} | Type: #{train.type} | Carriages: #{train.carriages}" }
-  #@trains.each_with_index {|train| puts "#{train}"}
   puts "Done"
 end
 
@@ -169,7 +166,6 @@ def move_train
   print "Please choose train number: "
   @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
   train_number = gets.to_i
-  #train_index = train_number - 1
   print "Specify which direction should train move (e.g. 'back' or 'fwd': "
   direction = gets.chomp
   if direction == "back"
