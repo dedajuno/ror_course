@@ -76,8 +76,10 @@ end
 def create_route
   print "Enter the first station of route: "
   first_station = gets.chomp
+  @stations << Station.new(first_station)
   print "Enter the next station of route: "
   last_station = gets.chomp
+  @stations << Station.new(last_station)
   route = Route.new(first_station, last_station)
   @routes << route
   loop do
@@ -98,6 +100,7 @@ def add_station_to_route
   route = gets.to_i
   puts "Enter station, which should be added: "
   added_station = gets.chomp
+  @stations << Station.new(added_station)
   @routes[route - 1].add(added_station)
   puts "#{@routes[route - 1].list}"
 end
@@ -178,17 +181,17 @@ def move_train
 end
 
 def list_stations
-  @stations.each {|station| puts "#{station.name} #{station.trains}"}
+  @stations.each {|station| puts "#{station.name}"}
   puts @stations
 end
 
 def list_routes
-  @routes.each {|route| puts "#{route.first_station} #{route.last_station}"}
+  @routes.each {|route| puts "#{route.stations}"}
   puts @routes
 end
 
 def list_trains
-  @trains.each {|train| puts "##{train.number} - #{train.type} #{train.carriage_count}"}
+  @trains.each {|train| puts "##{train.number} - #{train.type} with carriages: #{train.carriages}"}
   puts @trains
 end
 
