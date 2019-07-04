@@ -1,12 +1,14 @@
 class Station
-  attr_reader :name,
-              :trains
+  include InstanceCounter
+
+  attr_reader :name, :trains
+
   @@all = []
 
   def initialize(name)
     @name = name
     @trains = []
-    @@all << name
+    @@all << self
   end
 
   def list
@@ -26,6 +28,7 @@ class Station
   end
 
   private
+
   def self.all
     @@all
   end

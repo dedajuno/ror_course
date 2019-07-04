@@ -1,4 +1,6 @@
 class Route
+  include InstanceCounter
+
   attr_reader :stations
 
   def initialize(first_station, last_station)
@@ -23,6 +25,3 @@ class Route
     puts @stations
   end
 end
-
-#route1 = Route.new("MSK", "SPB")
-#puts "#{route1.list}"
