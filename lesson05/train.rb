@@ -5,7 +5,7 @@ class Train
   attr_reader :type
   attr_accessor :carriages, :current_station, :number
 
-  @@trains = []
+  @@trains = {}
 
   def initialize(number, type)
     @speed = 0
@@ -13,7 +13,8 @@ class Train
     @type = type
     @carriages = []
     @index_station = 0
-    @@trains << self
+    @@trains[number] = self
+    register_instance
   end
 
   def accellerate(speed)
@@ -86,6 +87,6 @@ class Train
   private
 
   def self.find(number)
-    @@trains[number - 1]
+    @@trains[number]
   end
 end

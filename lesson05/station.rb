@@ -9,6 +9,7 @@ class Station
     @name = name
     @trains = []
     @@all << self
+    register_instance
   end
 
   def list
