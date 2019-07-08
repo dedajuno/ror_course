@@ -5,8 +5,8 @@ require_relative 'train'
 require_relative 'station'
 require_relative 'passenger'
 require_relative 'cargo'
-require_relative 'passengerwagon'
-require_relative 'cargowagon'
+require_relative 'passenger_wagon'
+require_relative 'cargo_wagon'
 require_relative 'wagon'
 
 private #так как кроме этого класса методы больше нигде не будут использованы.
@@ -28,85 +28,113 @@ def create_station
       break
     end
   end
-  @stations.each {|station| puts "Station: #{station.name}"}
-  puts "Done"
+  rescue RuntimeError => error
+  puts error.message
+  retry
 end
 
 
 def create_train
-  number = 0
   loop do
+    print "Set number of train (e.g. 123-as, a3a-12 or 1s23l)"
+    number = gets.chomp
     print "Choose train type (Passenger(P) or Cargo(C): "
     type = gets.chomp
-    number += 1
-    (type == "C") ?
-        train = CargoTrain.new(number, "Cargo") :
-        train = PassengerTrain.new(number, "Passenger")
+    if type =~ /[c]/i
+      train = CargoTrain.new(number, "Cargo")
+    elsif type =~ /[p]/i
+      train = PassengerTrain.new(number, "Passenger")
+    else
+      raise "Wrong input, please choose C or P."
+    end
     @trains << train
+    puts "Train with number: #{train.number} was created"
     print "Add new train? (y/n): "
     add_more = gets.chomp
-    if add_more == "n"
+    if add_more =~ /[n]/i
       break
     end
   end
-  @trains.each {|train| puts "Train ##{train.number} | Type: #{train.type} | Carriages: #{train.carriages}" }
-  puts "Done"
+  rescue RuntimeError => error
+    puts error.message
+    retry
 end
 
 def create_route
-  print "Enter the first station of route: "
+  print "Enter the FIRST station of route: "
   first_station = gets.chomp
   @stations << Station.new(first_station)
-  print "Enter the next station of route: "
+  print "Enter the NEXT station of route: "
   last_station = gets.chomp
+  raise "The station couldn't be the same" if first_station == last_station
   @stations << Station.new(last_station)
   route = Route.new(first_station, last_station)
   @routes << route
   loop do
-    print "Add another station? (y/n): "
+    print "Add another station to route? (y/n): "
     add_more = gets.chomp
-    if add_more == "y"
+    if add_more =~ /[Yy]/
       add_station_to_route
     else
       break
     end
   end
-  puts "Done for create_route"
+  puts "Your route was created with following stations: #{route.stations}"
+rescue RuntimeError => error
+  puts error.message
+  retry
 end
 
 def add_station_to_route
-  @routes.each_with_index { |name, number | puts "#{number + 1} --- #{name}"}
+  list_routes
   print "Choose the route number: "
-  route = gets.to_i
+  route_prompt = gets.chomp
+  #route = route_prompt.to_i - 1
+  raise "Route number should be a digit." if route_prompt !~ /[\d]+/
+  raise "There is no route with such kind of number" if !@routes.include?(@routes[route])
   puts "Enter station, which should be added: "
   added_station = gets.chomp
   @stations << Station.new(added_station)
-  @routes[route - 1].add(added_station)
-  puts "#{@routes[route - 1].list}"
+  @routes[route].add(added_station)
+rescue RuntimeError => error
+  puts error.message
+  retry
 end
 
 def delete_station_from_route
-  @routes.each_with_index { |name, number | puts "#{number + 1} --- #{name}"}
-  print "Choose the route number: "
-  route = gets.to_i
+  if @routes.empty?
+    return puts "There is no any route created yet"
+    print prompt
+  end
+  list_routes
+  print "Choose the route number or type 'quit' to quit: "
+  route_prompt = gets.chomp
+  route = route_prompt.to_i - 1
+  raise "Route number should be a digit." if route_prompt !~ /[\d]+/
+  raise "There is no route with such kind of number" if !@routes.include?(@routes[route])
+  puts "#{@routes[route].list}"
   puts "Enter station, which should be deleted: "
   deleted_station = gets.chomp
-  @routes[route - 1].del(deleted_station)
-  puts "#{@routes[route - 1].list}"
+  raise "You can't delete stations if there is 2 stations persist in route" if @routes[route].stations.size <= 2
+  @routes[route].del(deleted_station)
+  puts "Successfully deleted #{deleted_station} from #{@routes[route]}"
+rescue RuntimeError => error
+  puts error.message
+  retry until route_prompt =~ /(quit)/i || deleted_station =~ /(quit)/i
 end
 
 def assign_route_to_train
   puts "Assign route to train."
   puts "Choose train number: "
-  @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
-  train_number = gets.to_i
+  list_trains
+  train_number_prompt = gets.chomp
+  train_number = train_number_prompt.to_i - 1
   until @trains.include?(@trains[train_number - 1])
-    puts "There is no any train with this number."
     create_train
     break
   end
   puts "Choose route: "
-  @routes.each_with_index {|name, number| puts "#{number + 1} - #{name}"}
+  list_routes
   route_number = gets.to_i
   until @routes.include?(@routes[route_number - 1])
     puts "There is no any route with this number"
@@ -161,18 +189,15 @@ def move_train
 end
 
 def list_stations
-  @stations.each {|station| puts "#{station.name}"}
-  puts @stations
+  @stations.each_with_index {|station, index| puts "##{index + 1} --- #{station.name}"}
 end
 
 def list_routes
-  @routes.each {|route| puts "#{route.stations}"}
-  puts @routes
+  @routes.each_with_index { |route, number | puts "#{number + 1} --- #{route} with following stations: #{route.stations}"}
 end
 
 def list_trains
-  @trains.each {|train| puts "##{train.number} - #{train.type} with carriages: #{train.carriages}"}
-  puts @trains
+  @trains.each {|train| puts "Train number: #{train.number} --- Train type: #{train.type} with carriages: #{train.carriages}"}
 end
 
 prompt = "Please choose number of option below:

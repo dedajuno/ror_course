@@ -7,8 +7,8 @@ class Train
 
   TRAIN_NUMBER = /^[\w]{3}-?[\w]{2}$/
 
-  attr_reader :type
-  attr_accessor :carriages, :current_station, :number
+#  attr_reader
+  attr_accessor :carriages, :current_station, :number, :type
 
   @@trains = {}
 
@@ -64,11 +64,13 @@ class Train
   end
 
   def move_back
-    if @index_station == 0
-      puts "We are already on the first station"
-    else
-      @index_station -= 1
-    end
+#    if @index_station == 0
+#      puts "We are already on the first station"
+#    else
+#      @index_station -= 1
+#    end
+    @index_station -= 1
+    raise "We are already on the first station." if @index_station == 0
   end
 
   def add_carriage(carriage)
@@ -99,7 +101,7 @@ class Train
   protected
 
   def validate!
-    raise "Train number is invalid and contain 5 symbols (e.g. 12345 or 123-4a)" if number !~ TRAIN_NUMBER
+    raise "Train number is invalid and should contain at least 5 symbols (e.g. 12345 or 123-4a)" if number !~ TRAIN_NUMBER
     raise "Train number can't be empty" if number.nil? || type.nil?
   end
 

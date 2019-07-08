@@ -32,7 +32,7 @@ class Route
   protected
 
   def validate!
-    raise "First and last station of route couldn't be same" if @stations.first == @stations.last
+    raise "First and last station of route couldn't be similar!" if @stations.first == @stations.last
   end
 
 end
