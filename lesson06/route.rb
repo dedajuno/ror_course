@@ -4,11 +4,9 @@ class Route
   attr_reader :stations
 
   def initialize(first_station, last_station)
-    #@first_station = first_station
-    #@last_station = last_station
     @stations = [first_station, last_station]
-    register_instance
     validate!
+    register_instance
   end
 
   def add(station)
@@ -32,7 +30,9 @@ class Route
   protected
 
   def validate!
-    raise "First and last station of route couldn't be similar!" if @stations.first == @stations.last
+#    raise "First and last station of route couldn't be similar!" if @first_station == @last_station
+    raise "Station name couldn't be empty or nil" if @stations.first.nil? || @stations.last.nil?
+    true
   end
 
 end

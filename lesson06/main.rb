@@ -51,7 +51,7 @@ def create_train
     puts "Train with number: #{train.number} was created"
     print "Add new train? (y/n): "
     add_more = gets.chomp
-    if add_more =~ /[n]/i
+    if add_more == 'n'
       break
     end
   end
@@ -89,7 +89,7 @@ def add_station_to_route
   list_routes
   print "Choose the route number: "
   route_prompt = gets.chomp
-  #route = route_prompt.to_i - 1
+  route = route_prompt.to_i - 1
   raise "Route number should be a digit." if route_prompt !~ /[\d]+/
   raise "There is no route with such kind of number" if !@routes.include?(@routes[route])
   puts "Enter station, which should be added: "
@@ -129,26 +129,26 @@ def assign_route_to_train
   list_trains
   train_number_prompt = gets.chomp
   train_number = train_number_prompt.to_i - 1
-  until @trains.include?(@trains[train_number - 1])
+  until @trains.include?(@trains[train_number])
     create_train
     break
   end
   puts "Choose route: "
   list_routes
-  route_number = gets.to_i
+  route_number_prompt = gets.chomp
+  route_number = route_number_prompt.to_i
   until @routes.include?(@routes[route_number - 1])
     puts "There is no any route with this number"
     create_route
     break
   end
-  @trains[train_number - 1].route(@routes[route_number - 1])
-  puts "Current station for train #{@trains[train_number - 1]} is #{@trains[train_number - 1].current_station}"
-  puts "Done"
+  @trains[train_number].route(@routes[route_number])
+  puts "Current station for train #{@trains[train_number]} is #{@trains[train_number].current_station}"
 end
 
 def change_carriages_count
   puts "Choose train number: "
-  @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
+  list_trains
   train = gets.to_i
   until @trains.include?(@trains[train - 1])
     puts "There is no such number of train."
@@ -158,6 +158,7 @@ def change_carriages_count
   puts "Please choose action."
   puts "Delete(d) or add(a): "
   option = gets.chomp
+  raise "You can only add(a) or delete(d)" if option !~ /[da]/i
   puts "Specify carriage name: "
   car_value = gets.chomp
   if @trains[train - 1].class == CargoTrain
@@ -167,37 +168,53 @@ def change_carriages_count
   end
   if option == "a"
     @trains[train - 1].add_carriage(car_value)
-  else option == "d"
-  @trains[train - 1].remove_carriage(car_value)
+  elsif option == "d"
+    @trains[train - 1].remove_carriage(car_value)
+  else
+    raise "Please choose (a)dd or (d)elete" if option =~ /[ad]/
   end
   @trains.each {|train| puts "Train ##{train.number} | Type: #{train.type} | Carriages: #{train.carriages}"}
+rescue RuntimeError => error
+  puts error.message
+  retry
 end
 
 def move_train
-  print "Please choose train number: "
-  @trains.each_with_index {|name, number| puts "##{number + 1} - #{name}"}
-  train_number = gets.to_i
-  print "Specify which direction should train move (e.g. 'back' or 'fwd': "
+  puts "Please choose train number: "
+  list_trains
+  train_number_prompt = gets.chomp
+  train_number = train_number_prompt.to_i
+  raise "You have to choose at least 1 train" if train_number_prompt !~ /\d/
+  print "Specify which direction should train move (e.g. 'back' or 'fwd'): "
   direction = gets.chomp
   if direction == "back"
     @trains[train_number - 1].move_back
-    puts "#{@trains[train_number - 1].current_station}"
+    puts "Current station of chosen train is #{@trains[train_number - 1].current_station}"
   elsif direction == "fwd"
     @trains[train_number - 1].move_forward
-    puts "#{@trains[train_number - 1].current_station}"
+    puts "Current station of chosen train is #{@trains[train_number - 1].current_station}"
+  else
+    raise "Please select correct direction (back or fwd)." if direction =~ /(back|fwd)/i
   end
+rescue RuntimeError => error
+  puts error.message
+  retry
 end
 
 def list_stations
+  return puts "No stations created yet. Press 'Enter'..." && create_station if @stations.empty?
   @stations.each_with_index {|station, index| puts "##{index + 1} --- #{station.name}"}
 end
 
 def list_routes
+  return puts "No routes created yet. Press 'Enter'..." && create_route if @routes.empty?
   @routes.each_with_index { |route, number | puts "#{number + 1} --- #{route} with following stations: #{route.stations}"}
 end
 
 def list_trains
-  @trains.each {|train| puts "Train number: #{train.number} --- Train type: #{train.type} with carriages: #{train.carriages}"}
+  return puts "No trains created yet. Press 'Enter' to create train" && create_train if @trains.empty?
+  @trains.each_with_index do |train, number| puts "#{number + 1} --- Train number: #{train.number} - Train type: #{train.type} with carriages: #{train.carriages}"
+  end
 end
 
 prompt = "Please choose number of option below:
