@@ -66,7 +66,6 @@ def create_route
   @stations << Station.new(first_station)
   print "Enter the NEXT station of route: "
   last_station = gets.chomp
-  raise "The station couldn't be the same" if first_station == last_station
   @stations << Station.new(last_station)
   route = Route.new(first_station, last_station)
   @routes << route
@@ -213,8 +212,7 @@ end
 
 def list_trains
   return puts "No trains created yet. Press 'Enter' to create train" && create_train if @trains.empty?
-  @trains.each_with_index do |train, number| puts "#{number + 1} --- Train number: #{train.number} - Train type: #{train.type} with carriages: #{train.carriages}"
-  end
+  @trains.each_with_index { |train, number| puts "#{number + 1} --- Train number: #{train.number} - Train type: #{train.type} with carriages: #{train.carriages}"}
 end
 
 prompt = "Please choose number of option below:
@@ -287,6 +285,3 @@ while option = gets.to_i do
     break
   end
 end
-
-
-

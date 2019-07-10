@@ -14,7 +14,7 @@ class Route
   end
 
   def del(station)
-      @stations.delete(station)
+    @stations.delete(station)
   end
 
   def list
@@ -30,9 +30,8 @@ class Route
   protected
 
   def validate!
-#    raise "First and last station of route couldn't be similar!" if @first_station == @last_station
-    raise "Station name couldn't be empty or nil" if @stations.first.nil? || @stations.last.nil?
-    true
+    raise "First station name couldn't be empty or nil" if @stations.first.nil? || @stations.first.empty?
+    raise "Last station name couldn't be empty or nil" if @stations.last.nil? || @stations.last.empty?
+    raise "First and last station names couldn't be the same" if @stations.first == @stations.last
   end
-
 end

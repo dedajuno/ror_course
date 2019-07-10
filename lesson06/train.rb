@@ -7,20 +7,19 @@ class Train
 
   TRAIN_NUMBER = /^[\w]{3}-?[\w]{2}$/
 
-#  attr_reader
   attr_accessor :carriages, :current_station, :number, :type
 
   @@trains = {}
 
   def initialize(number, type)
     @speed = 0
+    @index_station = 0
     @number = number
     @type = type
+    validate!
     @carriages = []
-    @index_station = 0
     @@trains[number] = self
     register_instance
-    validate!
   end
 
   def accellerate(speed)
@@ -40,7 +39,6 @@ class Train
     @route = route
     @current_station = @route.stations.first
     @index_station = 0
-    #@current_station.receive(self)
   end
 
   def next_station
@@ -64,11 +62,6 @@ class Train
   end
 
   def move_back
-#    if @index_station == 0
-#      puts "We are already on the first station"
-#    else
-#      @index_station -= 1
-#    end
     @index_station -= 1
     raise "We are already on the first station." if @index_station == 0
   end
@@ -80,6 +73,7 @@ class Train
       puts "Train is moving. First stop the train"
     end
   end
+
   def remove_carriage(carriage)
     if current_speed == 0
       if @carriages.empty? || @carriages.include?(carriage) != true
@@ -102,7 +96,7 @@ class Train
 
   def validate!
     raise "Train number is invalid and should contain at least 5 symbols (e.g. 12345 or 123-4a)" if number !~ TRAIN_NUMBER
-    raise "Train number can't be empty" if number.nil? || type.nil?
+    raise "Train type can't be empty" if type.nil? || type.empty?
   end
 
   private
