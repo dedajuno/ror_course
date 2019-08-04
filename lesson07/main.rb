@@ -158,17 +158,21 @@ def change_carriages_count
   puts "Delete(d) or add(a): "
   option = gets.chomp
   raise "You can only add(a) or delete(d)" if option !~ /[da]/i
+  puts "Specify carriage name: "
+  name = gets.chomp
   puts "Specify carriage seats or capacity: "
-  car_value = gets.chomp
+  car_value = gets.to_i
   if @trains[train - 1].class == CargoTrain
-    CargoWagon.new(car_value)
+    carriage = CargoWagon.new(name, car_value)
+    @carriages << carriage
   else
-    PassengerWagon.new(car_value)
+    carriage = PassengerWagon.new(name, car_value)
+    @carriages << carriage
   end
   if option == "a"
-    @trains[train - 1].add_carriage(car_value)
+    @trains[train - 1].add_carriage(carriage)
   elsif option == "d"
-    @trains[train - 1].remove_carriage(car_value)
+    @trains[train - 1].remove_carriage(carriage)
   else
     raise "Please choose (a)dd or (d)elete" if option =~ /[ad]/
   end
@@ -230,11 +234,36 @@ def list_trains_on_station
   puts "#{@stations[station_name - 1].list_trains}"
 end
 
-def occupy_place
-  puts "Please choose train:"
+def fill_carriage
+  puts "Please choose the train: "
   list_trains
   train_number_prompt = gets.chomp
   train_number = train_number_prompt.to_i
+  #puts "#{@trains[train_number - 1].list_carriages}"
+  @trains[train_number - 1].list_carriages do |carriage|
+    if carriage.class == PassengerWagon
+      puts "From whole #{carriage.seats} seats #{carriage.occupied_seats} is occupied."
+      puts "Please set the number of seats you want to occupy: "
+      carriage.occupy_seat
+    else
+        puts "From whole #{carriage.capacity} capacity, #{carriage.filled_capacity} is filled."
+        puts "Please set the volume you want to fill: "
+        volume = gets.to_i
+        carriage.fill_capacity(volume)
+        puts "From whole #{carriage.capacity} capacity, #{carriage.filled_capacity} is filled."
+    end
+  end
+=begin  puts "Please choose the carriage name: "
+  carriage = gets.chomp
+  puts "Please set the capacity of carriage: "
+  volume = gets.to_i
+  if @trains[train_number - 1].class == CargoTrain
+    @carriages[carriage].fill_capacity(volume)
+  else
+    @carriages[carriage].occupy_seat(volume)
+    #@trains[train_number - 1].occupy_seat(volume)
+  end
+=end
 end
 
 prompt = "Please choose number of option below:
@@ -251,6 +280,7 @@ List routes                     10
 List trains                     11
 List carriages for a train      12
 List trains for a station       13
+Fill carriages                  14
 Press Enter to quit.
 > "
 print prompt
@@ -305,7 +335,17 @@ while option = gets.to_i do
     puts "__________________"
     print prompt
   elsif option == 12
-
+    list_carriages_for_train
+    puts "__________________"
+    print prompt
+  elsif option == 13
+    list_trains_on_station
+    puts "__________________"
+    print prompt
+  elsif option == 14
+    fill_carriage
+    puts "__________________"
+    print prompt
   else
     puts "GL HF"
     break

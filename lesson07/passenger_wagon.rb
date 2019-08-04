@@ -1,7 +1,8 @@
 require_relative 'wagon'
 class PassengerWagon < Wagon
   attr_accessor :seats, :occupied_seats
-  def initialize (seats)
+  def initialize (name, seats)
+    @name = name
     @type = 'Passenger'
     @seats = seats
     @occupied_seats = 0
@@ -9,7 +10,7 @@ class PassengerWagon < Wagon
 
   def occupy_seat
     if free_seats > 0
-      @occupied_seats += 1
+      self.occupied_seats += 1
     end
   end
 
@@ -18,8 +19,8 @@ class PassengerWagon < Wagon
   end
 end
 
-p = PassengerWagon.new(20)
-p.occupy_seat
-p.occupy_seat
-puts "#{p.occupied_seats}"
-puts "#{p.free_seats}"
+#p = PassengerWagon.new(20)
+#p.occupy_seat
+#p.occupy_seat
+#puts "#{p.occupied_seats}"
+#puts "#{p.free_seats}"

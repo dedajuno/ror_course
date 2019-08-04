@@ -5,7 +5,7 @@ class Train
   include Company
   include InstanceCounter
 
-  TRAIN_NUMBER = /^[\w]{3}-?[\w]{2}$/
+ # TRAIN_NUMBER = /^[\w]{3}-?[\w]{2}$/
 
   attr_accessor :carriages, :current_station, :number, :type
 
@@ -16,10 +16,10 @@ class Train
     @index_station = 0
     @number = number
     @type = type
-    validate!
+ #   validate!
     @carriages = []
     @@trains[number] = self
-    register_instance
+#    register_instance
   end
 
   def accellerate(speed)
@@ -93,7 +93,7 @@ class Train
   end
 
   def list_carriages
-    @carriages.each { |carriage| yield carriage}
+    @carriages.each { |carriage| yield (carriage) }
   end
 
   protected
@@ -109,3 +109,7 @@ class Train
     @@trains[number]
   end
 end
+
+t = Train.new(1, "Passenger")
+t.add_carriage("QWE")
+t.list_carriages

@@ -2,7 +2,8 @@ require_relative 'wagon'
 class CargoWagon < Wagon
   attr_accessor :filled_capacity, :capacity
 
-  def initialize (capacity)
+  def initialize (name, capacity)
+    @name = name
     @type = 'Cargo'
     @capacity = capacity
     @filled_capacity = 0
@@ -19,7 +20,7 @@ class CargoWagon < Wagon
   end
 end
 
-c = CargoWagon.new(20)
-c.fill_capacity(1)
-puts c.free_capacity
-puts c.filled_capacity
+#c = CargoWagon.new(20)
+#c.fill_capacity(1)
+#puts c.free_capacity
+#puts c.filled_capacity
