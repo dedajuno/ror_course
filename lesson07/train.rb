@@ -110,6 +110,6 @@ class Train
   end
 end
 
-t = Train.new(1, "Passenger")
-t.add_carriage("QWE")
-t.list_carriages
+#t = Train.new(1, "Passenger")
+#t.add_carriage("QWE")
+#t.list_carriages

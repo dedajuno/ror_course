@@ -231,7 +231,7 @@ def list_trains_on_station
   puts "Please choose station: "
   list_stations
   station_name = gets.chomp
-  puts "#{@stations[station_name - 1].list_trains}"
+  puts "#{@stations[station_name].list_trains}"
 end
 
 def fill_carriage
