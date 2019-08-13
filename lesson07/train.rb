@@ -37,7 +37,7 @@ class Train
 
   def route(route)
     @route = route
-    @current_station = @route.stations.first
+    @route.stations.first.receive(self)
     @index_station = 0
   end
 

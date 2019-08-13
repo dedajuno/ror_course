@@ -62,11 +62,13 @@ end
 
 def create_route
   print "Enter the FIRST station of route: "
-  first_station = gets.chomp
-  @stations << Station.new(first_station)
+  first = gets.chomp
+  first_station = Station.new(first)
+  @stations << first_station
   print "Enter the NEXT station of route: "
-  last_station = gets.chomp
-  @stations << Station.new(last_station)
+  last = gets.chomp
+  last_station = Station.new(last)
+  @stations << last_station
   route = Route.new(first_station, last_station)
   @routes << route
   loop do
@@ -142,6 +144,7 @@ def assign_route_to_train
     break
   end
   @trains[train_number].route(@routes[route_number])
+  @trains[train_number].current_station.receive(@trains[train_number])
   puts "Current station for train #{@trains[train_number]} is #{@trains[train_number].current_station}"
 end
 
@@ -224,14 +227,19 @@ def list_carriages_for_train
   list_trains
   train_number_prompt = gets.chomp
   train_number = train_number_prompt.to_i
-  puts "#{@trains[train_number - 1].list_carriages}"
+  @trains[train_number - 1].list_carriages do |carriage|
+    puts carriage.name
+  end
 end
 
 def list_trains_on_station
   puts "Please choose station: "
   list_stations
-  station_name = gets.chomp
-  puts "#{@stations[station_name].list_trains}"
+  station_name_prompt = gets.chomp
+  station_name = station_name_prompt.to_i
+  @stations[station_name - 1].list_trains do |trains|
+    puts "#{trains.type} train with number: #{trains.number}"
+  end
 end
 
 def fill_carriage

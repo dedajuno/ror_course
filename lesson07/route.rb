@@ -30,8 +30,8 @@ class Route
   protected
 
   def validate!
-    raise "First station name couldn't be empty or nil" if @stations.first.nil? || @stations.first.empty?
-    raise "Last station name couldn't be empty or nil" if @stations.last.nil? || @stations.last.empty?
+    raise "First station name couldn't be empty or nil" if @stations.first.nil? #|| @stations.first.empty?
+    raise "Last station name couldn't be empty or nil" if @stations.last.nil? #|| @stations.last.empty?
     raise "First and last station names couldn't be the same" if @stations.first == @stations.last
   end
 end

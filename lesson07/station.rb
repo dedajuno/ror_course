@@ -47,6 +47,6 @@ class Station
   end
 
   def list_trains
-    @trains.each {|train| yield(train) }
+    @trains.each {|train| yield (train) }
   end
 end
