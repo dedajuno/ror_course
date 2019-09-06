@@ -20,7 +20,7 @@ class CargoWagon < Wagon
   end
 end
 
-# c = CargoWagon.new(20)
+# c = CargoWagon.new('hui', 20)
 # c.fill_capacity(1)
 # puts c.free_capacity
 # puts c.filled_capacity

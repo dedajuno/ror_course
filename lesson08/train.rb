@@ -7,7 +7,7 @@ class Train
   include Company
   include InstanceCounter
 
-  # TRAIN_NUMBER = /^[\w]{3}-?[\w]{2}$/
+  TRAIN_NUMBER = /^[\w]{3}-?[\w]{2}$/.freeze
 
   attr_accessor :carriages, :number, :type
 
@@ -18,10 +18,10 @@ class Train
     @index_station = 0
     @number = number
     @type = type
-    #   validate!
+    validate!
     @carriages = []
     @@trains[number] = self
-    #    register_instance
+    register_instance
   end
 
   def accelerate(speed)
@@ -99,7 +99,10 @@ class Train
   end
 
   def validate!
-    raise 'Train number is invalid and should contain at least 5 symbols (e.g. 12345 or 123-4a)' if number !~ TRAIN_NUMBER
+    if number !~ TRAIN_NUMBER
+      raise 'Train number is invalid and should contain at least 5 symbols
+      (e.g. 12345 or 123-4a)'
+    end
     raise "Train type can't be empty" if type.nil? || type.empty?
   end
 
