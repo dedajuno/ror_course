@@ -118,16 +118,17 @@ def create_carriage(train)
              else
                PassengerWagon.new(name, volume)
              end
-  @carriages << carriage
+  # @carriages << carriage
 end
 
 def add_carriage(train)
   carriage = create_carriage(train)
   train.add_carriage(carriage)
+   @carriages << carriage
 end
 
 def delete_carriage(train)
-  carriage = list_carriages_for_train(train)
+  carriage = list_carriages_for_train
   train.remove_carriage(carriage)
 end
 
@@ -210,17 +211,18 @@ end
 
 def fill_passenger_carriage(train)
   train.list_carriages do |carriage|
-    puts carriage
+    puts "From whole #{carriage.seats} seats #{carriage.occupied_seats} is occupied."
+    puts 'Please set the number of seats you want to occupy: '
     carriage.occupy_seat
   end
 end
 
 def fill_cargo_carriage(train)
   train.list_carriages do |carriage|
-    puts carriage.name
     puts 'Please set the volume you want to fill: '
     volume = gets.to_i
     carriage.fill_capacity(volume)
+    puts "From whole #{carriage.capacity} capacity, #{carriage.filled_capacity} is filled."
   end
 end
 
