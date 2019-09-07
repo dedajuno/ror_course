@@ -11,7 +11,21 @@ require_relative 'passenger_wagon'
 require_relative 'cargo_wagon'
 require_relative 'wagon'
 
-private
+MENU = ['1 - Create new station', '2 - Create new train',
+        '3 - Create new route', '4 - Add station to route',
+        '5 - Delete station from route', '6 - Assign route to train',
+        '7 - Change count of carriages', '8 - Move train back or forward',
+        '9 - List stations', '10 - List routes',
+        '11 - List trains', '12 - List carriages for a train',
+        '13 - List trains on station', '14 - Fill carriages ',
+        '15 - Quit'].freeze
+
+@methods = { 1 => :create_station, 2 => :create_train, 3 => :create_route,
+             4 => :add_station_to_route, 5 => :delete_station_from_route,
+             6 => :assign_route_to_train, 7 => :change_carriages_count,
+             8 => :move_train, 9 => :list_stations, 10 => :list_routes,
+             11 => :list_trains, 12 => :list_carriages_for_train,
+             13 => :list_trains_on_station, 14 => :fill_carriage }
 
 @trains = []
 @routes = []
@@ -113,18 +127,17 @@ def create_carriage(train)
   puts 'Specify carriage name and capacity: '
   name = gets.chomp
   volume = gets.to_i
-  carriage = if train.class == CargoTrain
-               CargoWagon.new(name, volume)
-             else
-               PassengerWagon.new(name, volume)
-             end
-  # @carriages << carriage
+  if train.class == CargoTrain
+    CargoWagon.new(name, volume)
+  else
+    PassengerWagon.new(name, volume)
+  end
 end
 
 def add_carriage(train)
   carriage = create_carriage(train)
   train.add_carriage(carriage)
-   @carriages << carriage
+  @carriages << carriage
 end
 
 def delete_carriage(train)
@@ -211,8 +224,7 @@ end
 
 def fill_passenger_carriage(train)
   train.list_carriages do |carriage|
-    puts "From whole #{carriage.seats} seats #{carriage.occupied_seats} is occupied."
-    puts 'Please set the number of seats you want to occupy: '
+    puts "From #{carriage.seats} seats #{carriage.occupied_seats} is occupied."
     carriage.occupy_seat
   end
 end
@@ -222,7 +234,7 @@ def fill_cargo_carriage(train)
     puts 'Please set the volume you want to fill: '
     volume = gets.to_i
     carriage.fill_capacity(volume)
-    puts "From whole #{carriage.capacity} capacity, #{carriage.filled_capacity} is filled."
+    puts "From #{carriage.capacity} cap, #{carriage.filled_capacity} is filled."
   end
 end
 
@@ -234,87 +246,10 @@ def fill_carriage
   fill_cargo_carriage(train) if train.class == CargoTrain
 end
 
-prompt = "Please choose number of option below:
-Create new station              1
-Create new train                2
-Create new route                3
-Add station to route            4
-Delete station from route       5
-Assign route to train           6
-Change count of carriages       7
-Move train backward or forward  8
-List stations                   9
-List routes                     10
-List trains                     11
-List carriages for a train      12
-List trains for a station       13
-Fill carriages                  14
-Press Enter to quit.
-> "
-print prompt
-while option = gets.to_i
-  if option == 1
-    create_station
-    puts '__________________'
-    print prompt
-  elsif option == 2
-    create_train
-    puts '__________________'
-    print prompt
-  elsif option == 3
-    create_route
-    puts '__________________'
-    print prompt
-  elsif option == 4
-    if @routes.empty?
-      puts 'No routes were created.'
-      create_route
-    end
-    add_station_to_route
-    puts '__________________'
-    print prompt
-  elsif option == 5
-    delete_station_from_route
-    puts '__________________'
-    print prompt
-  elsif option == 6
-    assign_route_to_train
-    puts '__________________'
-    print prompt
-  elsif option == 7
-    change_carriages_count
-    puts '__________________'
-    print prompt
-  elsif option == 8
-    move_train
-    puts '__________________'
-    print prompt
-  elsif option == 9
-    list_stations
-    puts '__________________'
-    print prompt
-  elsif option == 10
-    list_routes
-    puts '__________________'
-    print prompt
-  elsif option == 11
-    list_trains
-    puts '__________________'
-    print prompt
-  elsif option == 12
-    list_carriages_for_train
-    puts '__________________'
-    print prompt
-  elsif option == 13
-    list_trains_on_station
-    puts '__________________'
-    print prompt
-  elsif option == 14
-    fill_carriage
-    puts '__________________'
-    print prompt
-  else
-    puts 'GL HF'
-    break
-  end
+loop do
+  MENU.each { |item| puts item }
+  prompt_menu = gets.chomp.to_i
+  choice = @methods[prompt_menu]
+  send choice unless choice.nil?
+  break if prompt_menu == 15
 end
